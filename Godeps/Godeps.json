@@ -46,6 +46,11 @@
 		{
 			"ImportPath": "gopkg.in/yaml.v2",
 			"Rev": "a5b47d31c556af34a302ce5d659e6fea44d90de0"
+		},
+		{
+			"ImportPath": "github.com/pkg/profile",
+			"Comment": "v1.2.0-7-g3a8809b",
+			"Rev": "3a8809bd8a80f8ecfe4ee1b34b3f37194968617c"
 		}
 	]
 }

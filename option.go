@@ -4,9 +4,10 @@ import "github.com/jessevdk/go-flags"
 
 // Top level options
 type Option struct {
-	Version      bool          `long:"version" description:"Show version"`
-	OutputOption *OutputOption `group:"Output Options"`
-	SearchOption *SearchOption `group:"Search Options"`
+	Version       bool           `long:"version" description:"Show version"`
+	OutputOption  *OutputOption  `group:"Output Options"`
+	SearchOption  *SearchOption  `group:"Search Options"`
+	ProfileOption *ProfileOption `group:"Profile Options"`
 }
 
 // Output options.
@@ -135,6 +136,23 @@ func newSearchOption() *SearchOption {
 	return opt
 }
 
+type ProfileOption struct {
+	Mode   func(string) `long:"profile" description:"Enable profiling mode. One of [cpu, mem, block, trace]"`
+	Type   string       // Profile type. Not user option.
+	Enable bool         // Enable profile. Not user option.
+}
+
+func (p *ProfileOption) SetProfileMode(mode string) {
+	p.Enable = true
+	p.Type = mode
+}
+
+func newProfileOption() *ProfileOption {
+	opt := &ProfileOption{}
+	opt.Mode = opt.SetProfileMode
+	return opt
+}
+
 func newOptionParser(opts *Option) *flags.Parser {
 	output := flags.NewNamedParser("pt", flags.Default)
 	output.AddGroup("Output Options", "", &OutputOption{})
@@ -144,6 +162,7 @@ func newOptionParser(opts *Option) *flags.Parser {
 
 	opts.OutputOption = newOutputOption()
 	opts.SearchOption = newSearchOption()
+	opts.ProfileOption = newProfileOption()
 
 	parser := flags.NewParser(opts, flags.Default)
 	parser.Name = "pt"

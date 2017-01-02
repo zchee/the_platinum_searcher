@@ -11,6 +11,7 @@ import (
 	"github.com/monochromegane/conflag"
 	"github.com/monochromegane/go-home"
 	"github.com/monochromegane/terminal"
+	"github.com/pkg/profile"
 )
 
 const version = "2.1.5"
@@ -48,6 +49,26 @@ func (p PlatinumSearcher) Run(args []string) int {
 			return ExitCodeOK
 		}
 		return ExitCodeError
+	}
+
+	if opts.ProfileOption.Enable {
+		profConfig := []func(*profile.Profile){profile.ProfilePath(".")}
+		switch opts.ProfileOption.Type {
+		case "cpu":
+			profConfig = append(profConfig, profile.CPUProfile)
+			defer profile.Start(profConfig...).Stop()
+		case "mem":
+			profConfig = append(profConfig, profile.MemProfile)
+			defer profile.Start(profConfig...).Stop()
+		case "block":
+			profConfig = append(profConfig, profile.BlockProfile)
+			defer profile.Start(profConfig...).Stop()
+		case "trace":
+			profConfig = append(profConfig, profile.TraceProfile)
+			defer profile.Start(profConfig...).Stop()
+		default:
+			// nothing to do
+		}
 	}
 
 	if opts.Version {
